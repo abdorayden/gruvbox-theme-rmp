@@ -1,7 +1,5 @@
 # GruvBox theme for raymp
 
-- rose-pine raymp plugin
-
 <p align="center">
   <img src="./assets/gruvbox.png" width="80" />
 </p>
