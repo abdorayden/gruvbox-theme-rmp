@@ -47,6 +47,9 @@ local api = require("rmp.rmp")
 -- },
 
 local VARIANT = "dark"
+local doApply = false
+local THEME_NAME = "gruvbox"
+
 
 local gruvbox = {
     dark = {
@@ -88,7 +91,6 @@ local function apply(tha_template)
                 component.title.foregroundColor = api.colorFromHex(gruvbox[VARIANT].TitleText, api.FG)
                 component.title.backgroundColor = api.colorFromHex(gruvbox[VARIANT].TitleBackGround, api.BG)
             else
-                ---- unreachable
                 component.table = nil
             end
         end
@@ -100,33 +102,38 @@ local function apply(tha_template)
     end
 end
 
-local vt = api.VirtualTerminal.new(1, 1) -- sins i don't have to render shit
+local vt = api.VirtualTerminal(1, 1)
+
 return function()
-    -- getting the configurations
     vt:onConfiguration(function(cfg)
         if cfg then
             local conf = cfg:get("gruvbox-theme-rmp")
             if conf and conf.VARIANT then
-                -- maybe add more fields to configurations like choose specific window id to apply something
                 -- light | dark
                 VARIANT = conf.VARIANT
+                THEME_NAME = conf.name_as or "gruvbox"
+            end
+        end
+        local settings = cfg:get("settings")
+        if settings and settings.theme and settings.theme == THEME_NAME then
+            doApply = true
+        else
+            doApply = false
+        end
+    end)
+
+    vt:onTemplate(function(template)
+        if template then
+            if doApply then
+                apply(template)
             end
         end
     end)
 
-    -- apply the theme on the template
-    vt:onTemplate(function(template)
-        if template then
-            apply(template)
+    vt:addEventListener(api.EventType.TransformDataGet, function(data)
+        if data and data.ThemeManagerObj then
+            data.ThemeManagerObj:addMyTheme(THEME_NAME, gruvbox[VARIANT])
         end
-    end)
-
-    -- share the current theme
-    -- all plugins can get the theme and use it as their theme
-    vt:addEventListener(api.EventType.TransformDataPut, function()
-        return {
-            theme = gruvbox[VARIANT]
-        }
     end)
 
     return vt

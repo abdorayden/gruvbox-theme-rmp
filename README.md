@@ -15,11 +15,13 @@
 # Configurations
 ```lua
 {
-    "rose-pine-rmp",
-    -- config
+    "gruvbox-pine-rmp",
+    -- default config
     {
-        VARIANT = "dark" --"dark" "light"
+        VARIANT = "dark", --"dark" "light"
+        name_as = "gruvbox"
     }
 }
 ```
-- disable theme from settings config
+
+- sins the plugin is activated u have a new theme available "gruvbox" by default or your alias that u named in plugin configuration
